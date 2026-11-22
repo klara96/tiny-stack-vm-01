@@ -1,15 +1,13 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 
-let D = new Int32Array(256);
-let C = new Int32Array(64);
+const D = new Int32Array(256);
+const C = new Int32Array(64);
 let M = new Int32Array(256);
-let outBuf = new Uint8Array(65536);
+const outBuf = new Uint8Array(65536);
 let sp = 0, csp = 0, olen = 0, inPos = 0, inputBytes: Uint8Array;
 
 function run(program: Uint8Array, input: Uint8Array): number {
-  D.fill(0);
-  C.fill(0);
   M.fill(0);
   sp = 0;
   csp = 0;
@@ -42,9 +40,8 @@ function run(program: Uint8Array, input: Uint8Array): number {
         immBytes = 0; pops = 2; pushes = 3; break;
       case 0x07:
         immBytes = 0; pops = 3; pushes = 3; break;
-      case 0x10: case 0x11: case 0x12: case 0x13: case 0x14: case 0x15: case 0x16:
-      case 0x18: case 0x19: case 0x1a: case 0x1c: case 0x1d: case 0x1e: case 0x20:
-      case 0x21: case 0x22:
+      case 0x10: case 0x11: case 0x12: case 0x13: case 0x14: case 0x15: case 0x16: case 0x18:
+      case 0x19: case 0x1a: case 0x1c: case 0x1d: case 0x1e: case 0x20: case 0x21: case 0x22:
         immBytes = 0; pops = 2; pushes = 1; break;
       case 0x17: case 0x1b:
         immBytes = 0; pops = 1; pushes = 1; break;
@@ -115,7 +112,7 @@ function run(program: Uint8Array, input: Uint8Array): number {
   }
 }
 
-async function main() {
+function main() {
   const inputDir = process.env.MAKEFUN_INPUT_DIR || "/input";
   const outputDir = process.env.MAKEFUN_OUTPUT_DIR || "/output";
   const ids = fs.readdirSync(inputDir);
@@ -130,8 +127,7 @@ async function main() {
     const program = new Uint8Array(fs.readFileSync(progPath));
     const input = new Uint8Array(fs.readFileSync(inputPath));
     const exit = run(program, input);
-    const stdout = outBuf.slice(0, olen);
-    fs.writeFileSync(stdoutPath, stdout);
+    fs.writeFileSync(stdoutPath, outBuf.slice(0, olen));
     fs.writeFileSync(exitPath, exit.toString() + "\n");
   }
 }
